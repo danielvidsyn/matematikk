@@ -1,32 +1,43 @@
 <script>
+    import { onMount } from 'svelte';
+
     let themes = [];
 
-    // Hent temaer fra API ved komponentens montering
-    onMount(async () => {
+    async function fetchThemes() {
         const response = await fetch('/api/themes');
         themes = await response.json();
-    });
+    }
+
+    onMount(fetchThemes);
 
     let newTheme = '';
 
-    function addTheme() {
-        fetch('/api/themes', {
+    async function addTheme() {
+        const response = await fetch('/api/themes', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ name: newTheme })
-        }).then(() => {
-            // Oppdater tema-listen eller naviger brukeren
         });
+
+        if (response.ok) {
+            fetchThemes();
+        } else {
+            console.error('Failed to add theme');
+        }
     }
 
-    function deleteTheme(id) {
-        fetch(`/api/themes/${id}`, {
+    async function deleteTheme(id) {
+        const response = await fetch(`/api/themes/${id}`, {
             method: 'DELETE'
-        }).then(() => {
-            // Oppdater tema-listen eller naviger brukeren
         });
+
+        if (response.ok) {
+            fetchThemes();
+        } else {
+            console.error('Failed to delete theme');
+        }
     }
 </script>
 
@@ -41,10 +52,3 @@
         </li>
     {/each}
 </ul>
-
-<ul>
-    {#each themes as theme}
-        <li>{theme.name}</li>
-    {/each}
-</ul>
-
