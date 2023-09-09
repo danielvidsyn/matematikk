@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const app = express();
-const PORT = 3001;
+const PORT = 8080;
 
 const db = new sqlite3.Database('./mydb.sqlite');
 const SECRET_KEY = 'your_secret_key';  // Dette bør lagres sikkert, f.eks. i en .env-fil
