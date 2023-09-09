@@ -1,6 +1,6 @@
 <script>
     import { Router, Link, Route } from 'svelte-routing';
-    import Questions from './Questions.svelte';
+    import Questions from './components/Questions.svelte';
 </script>
 
 <!-- App.svelte -->
