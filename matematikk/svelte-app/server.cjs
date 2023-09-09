@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const app = express();
-const PORT = 8080;
+const PORT = 3001;
 
 const db = new sqlite3.Database('./mathquestions.db');
 const SECRET_KEY = 'your_secret_key';  // Dette bør lagres sikkert, f.eks. i en .env-fil
@@ -134,7 +134,6 @@ app.post('/api/login', (req, res) => {
 // Fallback-rute for SPA-routing
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
-
 });
 
 // Start serveren

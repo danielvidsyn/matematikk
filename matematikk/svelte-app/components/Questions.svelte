@@ -5,10 +5,20 @@
     let categories = ["Enkel", "Middels", "Kompleks"];
     let newQuestion = '';
     let selectedCategory;
+    let alternatives = {};
+    let hints = {};
+
+    let selectedOption = {}; // Til å holde styr på valgte alternativer
+    let showHints = {}; // Til å kontrollere om hint skal vises
 
     onMount(async () => {
         const response = await fetch('/api/questions');
         questions = await response.json();
+
+        for (let question of questions) {
+            alternatives[question.id] = await fetch(`/api/getAlternatives/${question.id}`).then(res => res.json());
+            hints[question.id] = await fetch(`/api/getLatexHint/${question.id}`).then(res => res.json());
+        }
     });
 
     async function addQuestion() {
@@ -38,6 +48,12 @@
             questions = questions.filter(question => question.id !== id);
         }
     }
+
+    function showHint(questionId) {
+        showHints[questionId] = true;
+        // Her kan du også få verdien av valgt alternativ for spørsmålet
+        console.log(`Valgt alternativ for spørsmål ${questionId}: ${selectedOption[questionId]}`);
+    }
 </script>
 
 <h2 class="text-2xl font-bold mb-4">Spørsmål</h2>
@@ -59,6 +75,18 @@
         <li class="mb-2">
             {question.content}
             <button on:click={() => deleteQuestion(question.id)} class="bg-red-500 text-white rounded p-1 ml-2">Slett</button>
+            <div class="mb-4">
+                {#each alternatives[question.id] as alternative}
+                    <label class="block mb-2">
+                        <input type="radio" group:checked={selectedOption[question.id]} value={alternative.id} class="mr-2">
+                        {alternative.text}
+                    </label>
+                {/each}
+            </div>
+            <button class="bg-blue-500 text-white px-4 py-2 rounded" on:click={() => showHint(question.id)}>Vis hint</button>
+            <div id={`hint-${question.id}`} class="mt-4 p-4 bg-gray-100 rounded" style="display: none;">
+                {hints[question.id]?.hint}
+            </div>
         </li>
     {/each}
 </ul>
